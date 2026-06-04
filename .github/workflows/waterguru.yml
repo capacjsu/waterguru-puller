@@ -1,0 +1,28 @@
+name: WaterGuru Daily Pull
+
+on:
+  schedule:
+    - cron: "0 11 * * *"   # Runs at 7 AM Eastern
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests psycopg2-binary
+
+      - name: Run WaterGuru pull
+        env:
+          WG_EMAIL: ${{ secrets.WG_EMAIL }}
+          WG_PASSWORD: ${{ secrets.WG_PASSWORD }}
+          DB_URL: ${{ secrets.DB_URL }}
+        run: python waterguru_pull.py
